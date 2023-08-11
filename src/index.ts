@@ -63,7 +63,6 @@ export class QuillSpellChecker {
    * @param params Options for the QuillSpellChecker instance.
    */
   constructor(public quill: Quill, public params: QuillSpellCheckerParams) {
-    debug("Attaching QuillSpellChecker to Quill instance", quill)
 
     // not allow the insertion of images and texts with formatting
     quill.clipboard.addMatcher(Node.ELEMENT_NODE, function (node) {
@@ -101,7 +100,6 @@ export class QuillSpellChecker {
         this.matches.length > 0 &&
         this.quill.getText().trim()
       ) {
-        debug("Adding suggestion boxes")
         this.boxes.addSuggestionBoxes()
       }
     })
@@ -118,7 +116,13 @@ export class QuillSpellChecker {
   public acceptMatch(id: MatchesEntity['id']) {
     const match = this.matches.find((match) => match.id === id)
     if (match && match.replacements && match.replacements?.length > 0) {
-      this.boxes.removeCurrentSuggestionBox(match, match?.replacements[0]?.value)
+      const replacement = match.replacements[0].value
+      this.quill.setSelection(match.offset, match.length, 'silent')
+      this.quill.deleteText(match.offset, match.length, 'silent')
+      this.quill.insertText(match.offset, replacement, 'silent')
+      // @ts-ignore
+      this.quill.setSelection(match.offset + replacement.length, 'silent')
+      this.boxes.removeCurrentSuggestionBox(match, replacement)
     }
   }
 
@@ -134,7 +138,6 @@ export class QuillSpellChecker {
       clearTimeout(this.typingCooldown)
     }
     this.typingCooldown = setTimeout(() => {
-      debug("User stopped typing, checking spelling")
 
       this.checkSpelling()
     }, this.params.cooldownTime)
@@ -142,7 +145,6 @@ export class QuillSpellChecker {
 
   private async checkSpelling() {
     if (document.querySelector("spck-toolbar")) {
-      debug("SpellChecker is installed as extension, not checking")
       return
     }
 
@@ -151,11 +153,7 @@ export class QuillSpellChecker {
     if (!text.replace(/[\n\t\r]/g, "").trim()) {
       return
     }
-
-    debug("Removing existing suggestion boxes")
     this.boxes.removeSuggestionBoxes()
-
-    debug("Checking spelling")
     this.loader.startLoading()
     const json = await this.getSpellCheckerResults(text)
 
@@ -163,11 +161,8 @@ export class QuillSpellChecker {
       this.matches = json.matches.filter(
         (match) => match.replacements && match.replacements.length > 0
       )
-
-      debug("Adding suggestion boxes")
       this.boxes.addSuggestionBoxes()
     } else {
-      debug("No matches found")
       this.matches = []
     }
     this.loader.stopLoading()
@@ -212,7 +207,6 @@ export class QuillSpellChecker {
  * @param Quill Quill static instance.
  */
 export default function registerQuillSpellChecker(Quill: any) {
-  debug("Registering QuillSpellChecker module for Quill instance")
   Quill.register({
     "modules/spellChecker": QuillSpellChecker,
     "formats/spck-match": createSuggestionBlotForQuillInstance(Quill),
