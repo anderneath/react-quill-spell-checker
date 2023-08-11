@@ -18,7 +18,6 @@ export function getCleanedHtml(html: string) {
  * Remove all suggestion boxes from the editor.
  */
 export function removeSuggestionBoxes(quillEditor: Quill) {
-  debug('Removing suggestion boxes for editor', quillEditor)
 
   const initialSelection = quillEditor.getSelection()
   const deltas = quillEditor.getContents()
@@ -73,8 +72,6 @@ export class SuggestionBoxes {
         .retain(match.length, { 'spck-match': match })
       // @ts-ignore
       this.parent.quill.updateContents(ops, 'silent')
-
-      debug('Adding formatter', 'lt-match', match.offset, match.length)
     })
   }
 
@@ -93,11 +90,12 @@ export class SuggestionBoxes {
       .filter((match) => match.replacements && match.replacements.length > 0)
       .filter((match) => match.offset !== currentMatch.offset)
       .map((match) => {
-        if (match.offset > start) {
+        if (match.offset >= start) {
           match.offset += diff
         }
         return match
       })
+    this.removeSuggestionBoxes()
     this.addSuggestionBoxes()
   }
 }
