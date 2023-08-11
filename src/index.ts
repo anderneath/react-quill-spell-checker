@@ -109,11 +109,17 @@ export class QuillSpellChecker {
     this.disableNativeSpellcheckIfSet()
   }
 
-  updateMatches(callback: (matches: MatchesEntity[]) => MatchesEntity[] | MatchesEntity[]) {
-    
+  public updateMatches(matches: MatchesEntity[]) {
     this.boxes.removeSuggestionBoxes()
-    this.matches = typeof callback === 'function' ? callback(this.matches) : callback
+    this.matches = matches
     this.boxes.addSuggestionBoxes()
+  }
+
+  public acceptMatch(id: MatchesEntity['id']) {
+    const match = this.matches.find((match) => match.id === id)
+    if (match && match.replacements && match.replacements?.length > 0) {
+      this.boxes.removeCurrentSuggestionBox(match, match?.replacements[0]?.value)
+    }
   }
 
   private disableNativeSpellcheckIfSet() {
