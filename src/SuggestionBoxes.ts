@@ -1,7 +1,6 @@
 import type Quill from 'quill'
 import Delta from 'quill-delta'
 import { QuillSpellChecker } from '.'
-import debug from './debug'
 import { MatchesEntity } from './types'
 
 /**

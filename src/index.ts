@@ -5,7 +5,6 @@ import PopupManager from "./PopupManager"
 import "./QuillSpellChecker.css"
 import createSuggestionBlotForQuillInstance from "./SuggestionBlot"
 import { SuggestionBoxes } from "./SuggestionBoxes"
-import debug from "./debug"
 import { MatchesEntity, SpellCheckerApi } from "./types"
 
 export type QuillSpellCheckerParams = {
