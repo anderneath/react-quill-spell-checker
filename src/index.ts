@@ -132,6 +132,14 @@ export class QuillSpellChecker {
     }
   }
 
+  public showMatches(show: boolean = true) {
+    if (show) {
+      this.boxes.addSuggestionBoxes()
+    } else {
+      this.boxes.removeSuggestionBoxes()
+    }
+  }
+
   private disableNativeSpellcheckIfSet() {
     if (this.params.disableNativeSpellcheck) {
       this.quill.root.setAttribute("spellcheck", "false")
@@ -149,7 +157,7 @@ export class QuillSpellChecker {
     }, this.params.cooldownTime)
   }
 
-  async checkSpelling() {
+  public async checkSpelling() {
     if (document.querySelector("spck-toolbar")) {
       return
     }
