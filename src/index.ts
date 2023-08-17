@@ -142,7 +142,7 @@ export class QuillSpellChecker {
     }, this.params.cooldownTime)
   }
 
-  private async checkSpelling() {
+  async checkSpelling() {
     if (document.querySelector("spck-toolbar")) {
       return
     }
