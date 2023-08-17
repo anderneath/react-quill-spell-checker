@@ -23,6 +23,7 @@ export interface DetectedLanguage {
 }
 export interface MatchesEntity {
   id: string
+  text: string
   replacements?: ReplacementsEntity[] | null
   offset: number
   length: number

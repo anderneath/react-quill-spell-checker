@@ -125,6 +125,13 @@ export class QuillSpellChecker {
     }
   }
 
+  public ignoreMatch(id: MatchesEntity['id']) {
+    const match = this.matches.find((match) => match.id === id)
+    if (match) {
+      this.boxes.removeCurrentSuggestionBox(match, match?.text)
+    }
+  }
+
   private disableNativeSpellcheckIfSet() {
     if (this.params.disableNativeSpellcheck) {
       this.quill.root.setAttribute("spellcheck", "false")
