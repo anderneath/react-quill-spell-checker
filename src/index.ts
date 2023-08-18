@@ -125,6 +125,21 @@ export class QuillSpellChecker {
     }
   }
 
+  public ignoreMatch(id: MatchesEntity['id']) {
+    const match = this.matches.find((match) => match.id === id)
+    if (match) {
+      this.boxes.removeCurrentSuggestionBox(match, match?.text)
+    }
+  }
+
+  public showMatches(show: boolean = true) {
+    if (show) {
+      this.boxes.addSuggestionBoxes()
+    } else {
+      this.boxes.removeSuggestionBoxes()
+    }
+  }
+
   private disableNativeSpellcheckIfSet() {
     if (this.params.disableNativeSpellcheck) {
       this.quill.root.setAttribute("spellcheck", "false")
@@ -142,7 +157,7 @@ export class QuillSpellChecker {
     }, this.params.cooldownTime)
   }
 
-  async checkSpelling() {
+  public async checkSpelling() {
     if (document.querySelector("spck-toolbar")) {
       return
     }
