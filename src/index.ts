@@ -55,6 +55,8 @@ export class QuillSpellChecker {
   public boxes = new SuggestionBoxes(this)
   public matches: MatchesEntity[] = []
 
+  protected onRequestComplete: Function  = () => null
+
   /**
    * Create a new QuillSpellChecker instance.
    *
@@ -157,6 +159,10 @@ export class QuillSpellChecker {
     }, this.params.cooldownTime)
   }
 
+  public setOnRequestComplete(callback: Function) {
+    this.onRequestComplete = callback
+  }
+
   public async checkSpelling() {
     if (document.querySelector("spck-toolbar")) {
       return
@@ -180,6 +186,7 @@ export class QuillSpellChecker {
       this.matches = []
     }
     this.loader.stopLoading()
+    this.onRequestComplete()
   }
 
   private async getSpellCheckerResults(text: string) {
