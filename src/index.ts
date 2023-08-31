@@ -97,7 +97,6 @@ export class QuillSpellChecker {
     this.quill.on("text-change", (_, __, source) => {
       if (source === "user") {
         const content = this.quill.getText()
-        console.log(content, "content")
         if (specialCharacters.test(content)) {
           const newText = content.replace(specialCharacters, "")
           this.quill.setText(newText)
