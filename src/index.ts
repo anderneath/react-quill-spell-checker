@@ -1,6 +1,6 @@
 import Quill from "quill"
 import LoadingIndicator from "./LoadingIndicator"
-import PlainClipboard from "./PlainClipboard"
+import PlainClipboard, { specialCharacters } from "./PlainClipboard"
 import PopupManager from "./PopupManager"
 import "./QuillSpellChecker.css"
 import createSuggestionBlotForQuillInstance from "./SuggestionBlot"
@@ -96,11 +96,25 @@ export class QuillSpellChecker {
 
     this.quill.on("text-change", (_delta, _, source) => {
       if (source === "user") {
-        this.onTextChange()
-      } else if (
-        this.matches.length > 0 &&
-        this.quill.getText().trim()
-      ) {
+        const insertedText = _delta.ops
+          .filter((op) => op.insert)
+          .map((op) => op.insert)
+          .join("")
+          console.log(insertedText, "insertedText")
+          
+        if (specialCharacters.test(insertedText)) {
+          const newText = insertedText.replace(specialCharacters, "")
+          const selection = quill.getSelection()
+
+          if (selection) {
+            quill.deleteText(selection.index, selection.length)
+            quill.insertText(selection.index, newText)
+            this.onTextChange()
+          }
+        } else {
+          this.onTextChange()
+        }
+      } else if (this.matches.length > 0 && this.quill.getText().trim()) {
         this.boxes.addSuggestionBoxes()
       }
     })
