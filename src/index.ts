@@ -94,30 +94,20 @@ export class QuillSpellChecker {
       event.preventDefault()
     })
 
-    this.quill.on("text-change", (_delta, _, source) => {
+    this.quill.on("text-change", (_, __, source) => {
       if (source === "user") {
-        const insertedText = _delta.ops
-          .filter((op) => op.insert)
-          .map((op) => op.insert)
-          .join("")
-          console.log(insertedText, "insertedText")
-          
-        if (specialCharacters.test(insertedText)) {
-          const newText = insertedText.replace(specialCharacters, "")
-          const selection = quill.getSelection()
-
-          if (selection) {
-            quill.deleteText(selection.index, selection.length)
-            quill.insertText(selection.index, newText)
-            this.onTextChange()
-          }
-        } else {
-          this.onTextChange()
+        const content = this.quill.getText()
+        console.log(content, "content")
+        if (specialCharacters.test(content)) {
+          const newText = content.replace(specialCharacters, "")
+          this.quill.setText(newText)
         }
+        this.onTextChange()
       } else if (this.matches.length > 0 && this.quill.getText().trim()) {
         this.boxes.addSuggestionBoxes()
       }
     })
+
     this.checkSpelling()
     this.disableNativeSpellcheckIfSet()
   }
