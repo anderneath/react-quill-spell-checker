@@ -46,8 +46,9 @@ export default class PopupManager {
   private handleSuggestionClick(suggestion: HTMLElement) {
     const offset = parseInt(suggestion.getAttribute("data-offset") || "0")
     const length = parseInt(suggestion.getAttribute("data-length") || "0")
+    const id = suggestion?.id?.replace("match-", "")
     const rule = this.parent.matches.find(
-      (r) => r.offset === offset && r.length === length
+      (r) => r.offset === offset && r.length === length && r.id === id
     )
     if (!rule) {
       return
@@ -63,11 +64,14 @@ export default class PopupManager {
 
     const applySuggestion = (replacement: string) => {
       this.parent.preventLoop()
-      this.parent.quill.setSelection(match.offset, match.length, 'silent')
-      this.parent.quill.deleteText(match.offset, match.length, 'silent')
-      this.parent.quill.insertText(match.offset, replacement, 'silent')
+      this.parent.quill.setSelection(match.offset, match.length, "silent")
+      this.parent.quill.deleteText(match.offset, match.length, "silent")
+      this.parent.quill.insertText(match.offset, replacement, "silent")
       // @ts-ignore
-      this.parent.quill.setSelection(match.offset + replacement.length, 'silent')
+      this.parent.quill.setSelection(
+        match.offset + replacement.length,
+        "silent"
+      )
       this.parent.boxes.removeCurrentSuggestionBox(match, replacement)
 
       this.closePopup()

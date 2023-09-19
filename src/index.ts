@@ -183,7 +183,10 @@ export class QuillSpellChecker {
     if (json && json.matches && json.matches.length > 0) {
       this.matches = json.matches.filter(
         (match) => match.replacements && match.replacements.length > 0
-      )
+      ).map((match, index) =>( {
+        ...match,
+        id: index.toString()
+      } ))
       this.boxes.addSuggestionBoxes()
     } else {
       this.matches = []
